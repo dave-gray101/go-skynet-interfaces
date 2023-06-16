@@ -131,14 +131,6 @@ var EnableMLock InitializationOptionSetter = func(p *InitializationOptions) {
 	p.MLock = true
 }
 
-// Create a new PredictTextOptions object with the given options.
-func MergeInitializationOptions(p *InitializationOptions, opts ...InitializationOptionSetter) *InitializationOptions {
-	for _, opt := range opts {
-		opt(p)
-	}
-	return p
-}
-
 var IgnoreEOS PredictTextOptionSetter = func(p *PredictTextOptions) {
 	p.IgnoreEOS = true
 }
@@ -255,14 +247,6 @@ func SetNKeep(n int) PredictTextOptionSetter {
 	}
 }
 
-// Create a new PredictTextOptions object with the given options.
-func MergePredictTextOptions(p *PredictTextOptions, opts ...PredictTextOptionSetter) *PredictTextOptions {
-	for _, opt := range opts {
-		opt(p)
-	}
-	return p
-}
-
 // SetTailFreeSamplingZ sets the tail free sampling, parameter z.
 func SetTailFreeSamplingZ(tfz float64) PredictTextOptionSetter {
 	return func(p *PredictTextOptions) {
@@ -323,5 +307,36 @@ func SetPenalizeNL(pnl bool) PredictTextOptionSetter {
 func SetLogitBias(lb string) PredictTextOptionSetter {
 	return func(p *PredictTextOptions) {
 		p.LogitBias = lb
+	}
+}
+
+// Create a new PredictTextOptions object with the given options.
+func MergePredictTextOptions(p *PredictTextOptions, opts ...PredictTextOptionSetter) *PredictTextOptions {
+	for _, opt := range opts {
+		opt(p)
+	}
+	return p
+}
+
+func GetMergePredictTextOptionsFnFromDefault(defaultOptions PredictTextOptions) func(opts ...PredictTextOptionSetter) *PredictTextOptions {
+	return func(opts ...PredictTextOptionSetter) *PredictTextOptions {
+		optionCopy := defaultOptions
+		return MergePredictTextOptions(&optionCopy, opts...)
+	}
+}
+
+// Create a new InitializationOptions object with the given options.
+func MergeInitializationOptions(p *InitializationOptions, opts ...InitializationOptionSetter) *InitializationOptions {
+	for _, opt := range opts {
+		opt(p)
+	}
+	return p
+}
+
+// Explicitly pass by value to copy the default rather than modify it.
+func GetMergeInitializationOptionsFnFromDefault(defaultOptions InitializationOptions) func(opts ...InitializationOptionSetter) *InitializationOptions {
+	return func(opts ...InitializationOptionSetter) *InitializationOptions {
+		optionCopy := defaultOptions
+		return MergeInitializationOptions(&optionCopy, opts...)
 	}
 }
