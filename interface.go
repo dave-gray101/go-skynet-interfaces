@@ -1,4 +1,4 @@
-// package interfaces
+package interfaces
 
 // mudler suggested these interfaces may belong up in localai itself, as go interfaces usually live near the consumer.
 // For now, comment them out rather than fully remove, but let's see if we actually need them.
